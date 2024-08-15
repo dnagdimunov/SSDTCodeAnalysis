@@ -1,50 +1,56 @@
 ﻿using Microsoft.SqlServer.Dac.CodeAnalysis;
 using Microsoft.SqlServer.Dac.Model;
+using System.Collections.Generic;
 using System.Globalization;
 using static SSDTCodeAnalysis.SSDTCodeAnalysisConstants;
 
 namespace SSDTCodeAnalysis.Rules
 {
-    [ExportCodeAnalysisRule(RuleId,
-    "Invalid table name",
-    Category = "Naming",
-    RuleScope = SqlRuleScope.Element
-    ,Description = "Invalid Table name {0}, missing tbl prefix.")]
+    [ExportCodeAnalysisRule(
+        RuleId,
+        "Invalid table name",
+        Category = "Naming",
+        RuleScope = SqlRuleScope.Element,
+        Description = "Invalid Table name {0}, missing tbl prefix."
+    )]
     public sealed class InvalidTableName : SqlCodeAnalysisRule
     {
         public const string RuleId = "SSDTCodeAnalysis.SR1002";
 
-        public InvalidTableName ()
+        public InvalidTableName()
         {
-            SupportedElementTypes =
-            [
-                ModelSchema.PrimaryKeyConstraint
-            ];
+            SupportedElementTypes = new[]
+            {
+                ModelSchema.Table
+            };
         }
 
-        public override IList<SqlRuleProblem> Analyze(
-            SqlRuleExecutionContext ruleExecutionContext)
+        public override IList<SqlRuleProblem> Analyze(SqlRuleExecutionContext ruleExecutionContext)
         {
-            IList<SqlRuleProblem> problems = [];
+            IList<SqlRuleProblem> problems = new List<SqlRuleProblem>();
 
             TSqlObject modelElement = ruleExecutionContext.ModelElement;
             RuleDescriptor ruleDescriptor = ruleExecutionContext.RuleDescriptor;
 
-            string elementName = Helper.GetElementName(ruleExecutionContext, modelElement);  
+            string elementName = Helper.GetElementName(ruleExecutionContext, modelElement);
 
-            var tableName = modelElement.GetReferenced().First(t => t.ObjectType.Name == "Table").Name.Parts[1];
-
-            if (! tableName.StartsWith("tbl"))
+            var tableReference = modelElement.GetReferenced().FirstOrDefault(t => t.ObjectType == ModelSchema.Table);
+            
+            if (tableReference != null)
             {
-                SqlRuleProblem problem = new(
-                    String.Format(CultureInfo.CurrentCulture,
-                        ruleDescriptor.DisplayDescription, modelElement.Name),
-                    modelElement);
-                problems.Add(problem);
+                string tableName = tableReference.Name.Parts.Count > 1 ? tableReference.Name.Parts[1] : string.Empty;
+
+                if (!tableName.StartsWith("tbl"))
+                {
+                    SqlRuleProblem problem = new SqlRuleProblem(
+                        string.Format(CultureInfo.CurrentCulture, ruleDescriptor.DisplayDescription, modelElement.Name),
+                        modelElement
+                    );
+                    problems.Add(problem);
+                }
             }
             
             return problems;
         }
-
     }
 }
