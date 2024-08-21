@@ -54,7 +54,6 @@ namespace SSDTCodeAnalysis.Rules
         public override IList<SqlRuleProblem> Analyze(
             SqlRuleExecutionContext ruleExecutionContext)
         {
-            Console.WriteLine("Something new");
             IList<SqlRuleProblem> problems = [];
 
             TSqlObject modelElement = ruleExecutionContext.ModelElement;
