@@ -2,3 +2,4 @@ obj/
 bin/
 [Dd]ebug/
 [Rr]elease/
+.DS_Store
