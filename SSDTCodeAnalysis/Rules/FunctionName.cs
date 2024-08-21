@@ -29,7 +29,6 @@ namespace SSDTCodeAnalysis.Rules
 
         public override IList<SqlRuleProblem> Analyze(SqlRuleExecutionContext ruleExecutionContext)
         {
-            Console.WriteLine("Checking Function");
             IList<SqlRuleProblem> problems = new List<SqlRuleProblem>();
 
             TSqlObject modelElement = ruleExecutionContext.ModelElement;
