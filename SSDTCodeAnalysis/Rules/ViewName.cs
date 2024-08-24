@@ -13,7 +13,7 @@ using System.Globalization;
     )]
     public sealed class InvalidViewName : BaseObjectNameRule
     {
-        public const string RuleId = "SSDTCodeAnalysis.SR1007";
+        public const string RuleId = "SSDTCodeAnalysis.SR1006";
 
         protected override string Prefix => "vw";
 
@@ -27,4 +27,5 @@ using System.Globalization;
         {
             SupportedElementTypes = new[] { ModelSchema.View };
         }
+
     }

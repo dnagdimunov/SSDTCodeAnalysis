@@ -21,7 +21,7 @@ namespace SSDTCodeAnalysis.Rules
         /// For this rule, that means the grouping will be "Public.Dac.Samples.Performance", with the rule  
         /// shown as "SR1004: Avoid using WaitFor Delay statements in stored procedures, functions and triggers."  
         /// </summary>  
-        public const string RuleId = "SSDTBuild.SR1001";
+        public const string RuleId = "SSDTCodeAnalysis.SR1007";
 
         public WaitForDelay()
         {

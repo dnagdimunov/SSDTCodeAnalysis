@@ -12,7 +12,7 @@ namespace SSDTCodeAnalysis.Rules
     )]
     public sealed class InvalidFunctionName : BaseObjectNameRule
     {
-        public const string RuleId = "SSDTCodeAnalysis.SR1006";
+        public const string RuleId = "SSDTCodeAnalysis.SR1003";
 
         protected override string Prefix => "fn";
 

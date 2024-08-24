@@ -13,7 +13,7 @@ using System.Globalization;
     )]
     public sealed class InvalidTableName : BaseObjectNameRule
     {
-        public const string RuleId = "SSDTCodeAnalysis.SR1002";
+        public const string RuleId = "SSDTCodeAnalysis.SR1005";
 
         protected override string Prefix => "tbl";
 
@@ -27,4 +27,5 @@ using System.Globalization;
         {
             SupportedElementTypes = new[] { ModelSchema.Table };
         }
+
     }

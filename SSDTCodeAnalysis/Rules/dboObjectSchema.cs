@@ -15,7 +15,7 @@ namespace SSDTCodeAnalysis.Rules
     )]
     public sealed class InvalidObjectSchema : SqlCodeAnalysisRule
     {
-        public const string RuleId = "SSDTCodeAnalysis.SR1005";
+        public const string RuleId = "SSDTCodeAnalysis.SR1001";
 
         public InvalidObjectSchema()
         {
