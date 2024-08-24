@@ -5,6 +5,8 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SSDTCodeAnalysis", "SSDTCodeAnalysis\SSDTCodeAnalysis.csproj", "{BE1B7701-1446-4869-919B-D76B7DEAC040}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SSDTCodeAnalysis.Tests", "SSDTCodeAnalysis.Tests\SSDTCodeAnalysis.Tests.csproj", "{7F9016D3-054F-46CD-AC03-259F4A44592C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{BE1B7701-1446-4869-919B-D76B7DEAC040}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BE1B7701-1446-4869-919B-D76B7DEAC040}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BE1B7701-1446-4869-919B-D76B7DEAC040}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7F9016D3-054F-46CD-AC03-259F4A44592C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7F9016D3-054F-46CD-AC03-259F4A44592C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7F9016D3-054F-46CD-AC03-259F4A44592C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7F9016D3-054F-46CD-AC03-259F4A44592C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
