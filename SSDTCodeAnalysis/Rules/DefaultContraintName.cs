@@ -1,58 +1,32 @@
-﻿using Microsoft.SqlServer.Dac.CodeAnalysis;
+﻿
+using Microsoft.SqlServer.Dac.CodeAnalysis;
 using Microsoft.SqlServer.Dac.Model;
+using SSDTCodeAnalysis.Rules;
 using System.Collections.Generic;
 using System.Globalization;
-using static SSDTCodeAnalysis.SSDTCodeAnalysisConstants;
 
-namespace SSDTCodeAnalysis.Rules
-{
     [ExportCodeAnalysisRule(
         RuleId,
-        "Invalid or missing default constraint name",
+        "Invalid default constraint name",
         Category = "Naming",
         RuleScope = SqlRuleScope.Element,
-        Description = "Invalid or missing default constraint name {0} on column {1}"
+        Description = "Invalid default constraint name {0}, missing name or DF_ prefix."
     )]
-    public sealed class InvalidDefaultConstraintName : SqlCodeAnalysisRule
+    public sealed class DefaultConstraintName : BaseConstraintNameRule
     {
-        public const string RuleId = "SSDTCodeAnalysis.SR1004";
+        public const string RuleId = "SSDTCodeAnalysis.SR2002";
 
-        public InvalidDefaultConstraintName()
+        protected override string Prefix => "DF_";
+
+        protected override ModelTypeClass[] SupportedSchemas => new[]
         {
-            SupportedElementTypes = new[]
-            {
-                ModelSchema.DefaultConstraint
-            };
-        }
+            ModelSchema.DefaultConstraint
+        };
 
-        public override IList<SqlRuleProblem> Analyze(SqlRuleExecutionContext ruleExecutionContext)
+        // Constructor
+        public DefaultConstraintName()
         {
-            IList<SqlRuleProblem> problems = new List<SqlRuleProblem>();
-
-            TSqlObject modelElement = ruleExecutionContext.ModelElement;
-            RuleDescriptor ruleDescriptor = ruleExecutionContext.RuleDescriptor;
-
-            string elementName = Helper.GetElementName(ruleExecutionContext, modelElement);
-            var tableName = modelElement.GetReferenced()
-                                        .First(t => t.ObjectType.Name == "Table")
-                                        .Name
-                                        .Parts[1];
-
-            var column = modelElement.GetReferenced()
-                                     .First(t => t.ObjectType.Name == "Column");
-
-            if (modelElement.Name.Parts.Count == 0 ||
-                !modelElement.Name.Parts[1].StartsWith(string.Format("DF_{0}", tableName)))
-            {
-                string columnName = string.Join(".", column.Name.Parts);
-                SqlRuleProblem problem = new SqlRuleProblem(
-                    string.Format(CultureInfo.CurrentCulture, ruleDescriptor.DisplayDescription, modelElement.Name, columnName),
-                    modelElement
-                );
-                problems.Add(problem);
-            }
-
-            return problems;
+            SupportedElementTypes = new[] { ModelSchema.DefaultConstraint };
         }
     }
-}
+

@@ -1,67 +1,32 @@
-﻿using Microsoft.SqlServer.Dac.CodeAnalysis;
+﻿
+using Microsoft.SqlServer.Dac.CodeAnalysis;
 using Microsoft.SqlServer.Dac.Model;
+using SSDTCodeAnalysis.Rules;
 using System.Collections.Generic;
 using System.Globalization;
-using static SSDTCodeAnalysis.SSDTCodeAnalysisConstants;
 
-namespace SSDTCodeAnalysis.Rules
-{
     [ExportCodeAnalysisRule(
         RuleId,
-        "Invalid or missing Primary Key Constraint Name",
+        "Invalid primary key constraint name",
         Category = "Naming",
         RuleScope = SqlRuleScope.Element,
-        Description = "Invalid or missing Primary Key Constraint name {0} on Table {1}"
+        Description = "Invalid primary key constraint name {0}, missing name or PF_ prefix."
     )]
-    public sealed class InvalidPrimaryKeyConstraintName : SqlCodeAnalysisRule
+    public sealed class PrimaryKeyConstraintName : BaseConstraintNameRule
     {
-        public const string RuleId = "SSDTCodeAnalysis.SR1003";
+        public const string RuleId = "SSDTCodeAnalysis.SR2001";
 
-        public InvalidPrimaryKeyConstraintName()
+        protected override string Prefix => "PK_";
+
+        protected override ModelTypeClass[] SupportedSchemas => new[]
         {
-            SupportedElementTypes = new[]
-            {
-                ModelSchema.PrimaryKeyConstraint
-            };
-        }
+            ModelSchema.DefaultConstraint
+        };
 
-        public override IList<SqlRuleProblem> Analyze(SqlRuleExecutionContext ruleExecutionContext)
+        // Constructor
+        public PrimaryKeyConstraintName()
         {
-            IList<SqlRuleProblem> problems = new List<SqlRuleProblem>();
-
-            TSqlObject modelElement = ruleExecutionContext.ModelElement;
-            RuleDescriptor ruleDescriptor = ruleExecutionContext.RuleDescriptor;
-
-            string elementName = Helper.GetElementName(ruleExecutionContext, modelElement);
-            var tableReference = modelElement.GetReferenced()
-                                             .FirstOrDefault(t => t.ObjectType.Name == "Table");
-
-            if (tableReference != null)
-            {
-                string tableName = tableReference.Name.Parts[1];
-
-                string constraintName = modelElement.Name.Parts.Count > 1 
-                    ? modelElement.Name.Parts[1] 
-                    : string.Empty;
-
-                string expectedConstraintName = string.Format("PK_{0}", tableName);
-
-                if (constraintName != expectedConstraintName)
-                {
-                    SqlRuleProblem problem = new SqlRuleProblem(
-                        string.Format(
-                            CultureInfo.CurrentCulture,
-                            ruleDescriptor.DisplayDescription,
-                            modelElement.Name,
-                            tableName
-                        ),
-                        modelElement
-                    );
-                    problems.Add(problem);
-                }
-            }
-
-            return problems;
+            SupportedElementTypes = new[] { ModelSchema.PrimaryKeyConstraint };
         }
     }
-}
+
