@@ -15,10 +15,8 @@ using System.Globalization;
     {
         public const string RuleId = "SSDTCodeAnalysis.SR1007";
 
-        // Override to provide the specific prefix for views
         protected override string Prefix => "vw";
 
-        // Use an array literal with the static member directly
         protected override ModelTypeClass[] SupportedSchemas => new[]
         {
             ModelSchema.View
