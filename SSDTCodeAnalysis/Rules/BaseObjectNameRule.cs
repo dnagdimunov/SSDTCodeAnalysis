@@ -23,21 +23,14 @@ namespace SSDTCodeAnalysis.Rules
             TSqlObject modelElement = ruleExecutionContext.ModelElement;
             RuleDescriptor ruleDescriptor = ruleExecutionContext.RuleDescriptor;
 
-            string elementName = Helper.GetElementName(ruleExecutionContext, modelElement);
-            var reference = modelElement.GetReferenced().FirstOrDefault();
-
-            if (reference != null)
+            string name = modelElement.Name.Parts[1];
+            if (!name.StartsWith(Prefix))
             {
-                string name = reference.Name.Parts.Count > 1 ? reference.Name.Parts[1] : string.Empty;
-
-                if (!name.StartsWith(Prefix))
-                {
-                    SqlRuleProblem problem = new SqlRuleProblem(
-                        string.Format(CultureInfo.CurrentCulture, ruleDescriptor.DisplayDescription, modelElement.Name),
-                        modelElement
-                    );
-                    problems.Add(problem);
-                }
+                SqlRuleProblem problem = new SqlRuleProblem(
+                    string.Format(CultureInfo.CurrentCulture, ruleDescriptor.DisplayDescription, modelElement.Name),
+                    modelElement
+                );
+                problems.Add(problem);
             }
 
             return problems;
