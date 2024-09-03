@@ -34,7 +34,7 @@ public class SSDTCodeAnalysisTests
         }
     }
 
-[TestMethod]
+    [TestMethod]
     public void Analyze_ShouldReturnProblem_WhenProcedureNameDoesNotStartWithUsp()
     {
         using (var model = new TSqlModel(SqlServerVersion.Sql130, new TSqlModelOptions()))
@@ -60,7 +60,7 @@ public class SSDTCodeAnalysisTests
         }
     }
 
-[TestMethod]
+    [TestMethod]
     public void Analyze_ShouldReturnProblem_WhenViewNameDoesNotStartWithvw()
     {
         using (var model = new TSqlModel(SqlServerVersion.Sql130, new TSqlModelOptions()))
