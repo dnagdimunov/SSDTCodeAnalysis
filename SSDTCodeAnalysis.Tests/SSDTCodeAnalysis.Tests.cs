@@ -86,7 +86,7 @@ public class SSDTCodeAnalysisTests
         }
     }
     [TestMethod]
-    public void Analyze_ShouldNotReturnProblem_WhenProcedureNameStartsWithvw()
+    public void Analyze_ShouldNotReturnProblem_WhenViewNameStartsWithvw()
     {
         using (var model = new TSqlModel(SqlServerVersion.Sql130, new TSqlModelOptions()))
         {
