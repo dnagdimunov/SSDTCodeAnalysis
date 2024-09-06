@@ -37,7 +37,7 @@ namespace SSDTCodeAnalysis.Rules
             RuleDescriptor ruleDescriptor = ruleExecutionContext.RuleDescriptor;
 
             string elementName = Helper.GetElementName(ruleExecutionContext, modelElement);
-            TSqlObject objectSchema = modelElement.GetParent(DacQueryScopes.SameDatabase);
+            TSqlObject objectSchema = modelElement.GetParent();
 
             if ((objectSchema?.Name?.Parts?[0] ?? string.Empty) == "dbo")
             {
