@@ -176,4 +176,58 @@ public class SSDTCodeAnalysisTests
             Assert.IsTrue(analysisResults.Problems.Count == 0, "Expected no problems to be reported, but some were found.");
         }
     }
+
+
+    [TestMethod]
+    public void Analyze_ShouldReturnProblem_WhenTableNameDoesNotStartWithtbl()
+    {
+        using (var model = new TSqlModel(SqlServerVersion.Sql130, new TSqlModelOptions()))
+        {
+            model.AddObjects("CREATE TABLE invalidTableName (ID int);");
+
+            CodeAnalysisServiceFactory factory = new CodeAnalysisServiceFactory();
+                        var ruleSettings = new CodeAnalysisRuleSettings()
+                    {
+                        new RuleConfiguration("SSDTCodeAnalysis.SR1005")
+                    };
+            ruleSettings.DisableRulesNotInSettings = true;
+
+            CodeAnalysisService service = factory.CreateAnalysisService(model.Version, new CodeAnalysisServiceSettings()
+            {
+                RuleSettings = ruleSettings
+            });
+
+            CodeAnalysisResult analysisResults = service.Analyze(model);
+
+            Assert.IsTrue(analysisResults.Problems.Any(), "Expected problems to be reported, but none were found.");
+           
+        }
+    }
+    [TestMethod]
+    public void Analyze_ShouldNotReturnProblem_WhenTableNameStartsWithtbl()
+    {
+        using (var model = new TSqlModel(SqlServerVersion.Sql130, new TSqlModelOptions()))
+        {
+            model.AddObjects("CREATE TABLE tblUnitTest (ID int)");
+
+            CodeAnalysisServiceFactory factory = new CodeAnalysisServiceFactory();
+            var ruleSettings = new CodeAnalysisRuleSettings()
+            {
+                new RuleConfiguration("SSDTCodeAnalysis.SR1005")
+            };
+
+            ruleSettings.DisableRulesNotInSettings = true;
+
+            CodeAnalysisService service = factory.CreateAnalysisService(model.Version, new CodeAnalysisServiceSettings()
+            {
+                RuleSettings = ruleSettings
+            });
+
+            CodeAnalysisResult analysisResults = service.Analyze(model);
+
+            Assert.IsTrue(analysisResults.Problems.Count == 0, "Expected no problems to be reported, but some were found.");
+        }
+    }
+
+
 }
