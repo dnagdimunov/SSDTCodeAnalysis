@@ -111,4 +111,69 @@ public class SSDTCodeAnalysisTests
         }
     }
 
+
+    [TestMethod]
+    public void Analyze_ShouldReturnProblem_WhenFunctionNameDoesNotStartWithfn()
+    {
+        using (var model = new TSqlModel(SqlServerVersion.Sql130, new TSqlModelOptions()))
+        {
+            model.AddObjects(@"CREATE FUNCTION [dbo].[invalidFunctionName]
+                (@param1 int = 0)
+                RETURNS INT
+                AS
+                BEGIN
+                    RETURN @param1;
+                END
+                GO");
+
+            CodeAnalysisServiceFactory factory = new CodeAnalysisServiceFactory();
+                        var ruleSettings = new CodeAnalysisRuleSettings()
+                    {
+                        new RuleConfiguration("SSDTCodeAnalysis.SR1003")
+                    };
+            ruleSettings.DisableRulesNotInSettings = true;
+
+            CodeAnalysisService service = factory.CreateAnalysisService(model.Version, new CodeAnalysisServiceSettings()
+            {
+                RuleSettings = ruleSettings
+            });
+
+            CodeAnalysisResult analysisResults = service.Analyze(model);
+
+            Assert.IsTrue(analysisResults.Problems.Any(), "Expected problems to be reported, but none were found.");
+           
+        }
+    }
+    [TestMethod]
+    public void Analyze_ShouldNotReturnProblem_WhenFunctionNameStartsWithfn()
+    {
+        using (var model = new TSqlModel(SqlServerVersion.Sql130, new TSqlModelOptions()))
+        {
+            model.AddObjects(@"CREATE FUNCTION [dbo].[fnFunctionName]
+                (@param1 int = 0)
+                RETURNS INT
+                AS
+                BEGIN
+                    RETURN @param1;
+                END
+                GO");
+
+            CodeAnalysisServiceFactory factory = new CodeAnalysisServiceFactory();
+            var ruleSettings = new CodeAnalysisRuleSettings()
+            {
+                new RuleConfiguration("SSDTCodeAnalysis.SR1003")
+            };
+
+            ruleSettings.DisableRulesNotInSettings = true;
+
+            CodeAnalysisService service = factory.CreateAnalysisService(model.Version, new CodeAnalysisServiceSettings()
+            {
+                RuleSettings = ruleSettings
+            });
+
+            CodeAnalysisResult analysisResults = service.Analyze(model);
+
+            Assert.IsTrue(analysisResults.Problems.Count == 0, "Expected no problems to be reported, but some were found.");
+        }
+    }
 }
