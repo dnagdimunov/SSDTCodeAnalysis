@@ -229,5 +229,55 @@ public class SSDTCodeAnalysisTests
         }
     }
 
+    [TestMethod]
+    public void Analyze_ShouldReturnProblem_WhenDefaultConstraintNameDoesNotStartWithDF()
+    {
+        using (var model = new TSqlModel(SqlServerVersion.Sql130, new TSqlModelOptions()))
+        {
+            model.AddObjects("CREATE TABLE invalidTableName (ID int DEFAULT (0));");
+
+            CodeAnalysisServiceFactory factory = new CodeAnalysisServiceFactory();
+                        var ruleSettings = new CodeAnalysisRuleSettings()
+                    {
+                        new RuleConfiguration("SSDTCodeAnalysis.SR2002")
+                    };
+            ruleSettings.DisableRulesNotInSettings = true;
+
+            CodeAnalysisService service = factory.CreateAnalysisService(model.Version, new CodeAnalysisServiceSettings()
+            {
+                RuleSettings = ruleSettings
+            });
+
+            CodeAnalysisResult analysisResults = service.Analyze(model);
+
+            Assert.IsTrue(analysisResults.Problems.Any(), "Expected problems to be reported, but none were found.");
+           
+        }
+    }
+    [TestMethod]
+    public void Analyze_ShouldNotReturnProblem_WhenDefaultConstraintNameStartsWithDF()
+    {
+        using (var model = new TSqlModel(SqlServerVersion.Sql130, new TSqlModelOptions()))
+        {
+            model.AddObjects("CREATE TABLE tblUnitTest (ID int CONSTRAINT DF_tblUnitTest_ID DEFAULT (0))");
+
+            CodeAnalysisServiceFactory factory = new CodeAnalysisServiceFactory();
+            var ruleSettings = new CodeAnalysisRuleSettings()
+            {
+                new RuleConfiguration("SSDTCodeAnalysis.SR2002")
+            };
+
+            ruleSettings.DisableRulesNotInSettings = true;
+
+            CodeAnalysisService service = factory.CreateAnalysisService(model.Version, new CodeAnalysisServiceSettings()
+            {
+                RuleSettings = ruleSettings
+            });
+
+            CodeAnalysisResult analysisResults = service.Analyze(model);
+
+            Assert.IsTrue(analysisResults.Problems.Count == 0, "Expected no problems to be reported, but some were found.");
+        }
+    }
 
 }
