@@ -382,4 +382,85 @@ public class SSDTCodeAnalysisTests
             Assert.IsTrue(analysisResults.Problems.Count == 0, "Expected no problems to be reported, but some were found.");
         }
     }
+
+    [TestMethod]
+    public void Analyze_ShouldReturnProblem_WhenForeignKeyNameNotSpecified()
+    {
+        using (var model = new TSqlModel(SqlServerVersion.Sql130, new TSqlModelOptions()))
+        {
+            model.AddObjects(@"
+
+                CREATE TABLE [CodeAnalysis].[tblParent]
+                (
+                [ParentId] INT NOT NULL 
+                CONSTRAINT PK_tblParent PRIMARY KEY (ParentId)
+                ) ON [DATA];
+                GO
+                CREATE TABLE [CodeAnalysis].[tblChild]
+                (
+                [ChildId] INT NOT NULL
+                ,[ParentId] INT FOREIGN KEY REFERENCES [CodeAnalysis].[tblParent]([ParentId]) 
+                CONSTRAINT PK_tblChild PRIMARY KEY ([ChildId])
+                ) ON [DATA];
+                GO
+                ");
+
+            CodeAnalysisServiceFactory factory = new CodeAnalysisServiceFactory();
+                        var ruleSettings = new CodeAnalysisRuleSettings()
+                    {
+                        new RuleConfiguration("SSDTCodeAnalysis.SR2003")
+                    };
+            ruleSettings.DisableRulesNotInSettings = true;
+
+            CodeAnalysisService service = factory.CreateAnalysisService(model.Version, new CodeAnalysisServiceSettings()
+            {
+                RuleSettings = ruleSettings
+            });
+
+            CodeAnalysisResult analysisResults = service.Analyze(model);
+
+            Assert.IsTrue(analysisResults.Problems.Any(), "Expected problems to be reported, but none were found.");
+           
+        }
+    }
+    [TestMethod]
+    public void Analyze_ShouldNotReturnProblem_WhenForeignKeyNameIsSpecified()
+    {
+        using (var model = new TSqlModel(SqlServerVersion.Sql130, new TSqlModelOptions()))
+        {
+            model.AddObjects(@"
+                CREATE TABLE [CodeAnalysis].[tblParent]
+                (
+                [ParentId] INT NOT NULL 
+                CONSTRAINT PK_tblParent PRIMARY KEY (ParentId)
+                ) ON [DATA];
+                GO
+                CREATE TABLE [CodeAnalysis].[tblChild]
+                (
+                [ChildId] INT NOT NULL
+                ,[ParentId] INT CONSTRAINT FK_tblChild_tblParent FOREIGN KEY REFERENCES [CodeAnalysis].[tblParent]([ParentId]) 
+                CONSTRAINT PK_tblChild PRIMARY KEY ([ChildId])
+                ) ON [DATA];
+                GO
+            ");
+
+            CodeAnalysisServiceFactory factory = new CodeAnalysisServiceFactory();
+            var ruleSettings = new CodeAnalysisRuleSettings()
+            {
+                new RuleConfiguration("SSDTCodeAnalysis.SR2003")
+            };
+
+            ruleSettings.DisableRulesNotInSettings = true;
+
+            CodeAnalysisService service = factory.CreateAnalysisService(model.Version, new CodeAnalysisServiceSettings()
+            {
+                RuleSettings = ruleSettings
+            });
+
+            CodeAnalysisResult analysisResults = service.Analyze(model);
+
+            Assert.IsTrue(analysisResults.Problems.Count == 0, "Expected no problems to be reported, but some were found.");
+        }
+    }
+
 }
